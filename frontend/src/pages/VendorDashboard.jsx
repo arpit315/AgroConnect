@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, ShoppingCart, ClipboardList, PlusCircle, Search, TrendingUp, ArrowRight, Loader, Tag, MapPin, Users } from 'lucide-react';
+import WeatherWidget from '../components/WeatherWidget';
 
 const VendorDashboard = () => {
     const { user } = useAuth();
@@ -89,6 +90,41 @@ const VendorDashboard = () => {
             </div>
 
             <div className="grid lg:grid-cols-3 gap-10">
+                {/* Weather Widget */}
+                <div className="lg:col-span-1 space-y-6">
+                    <WeatherWidget location={user?.location || "Warehouse"} />
+                    
+                    {/* My Active Requirements */}
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                            <ClipboardList className="w-6 h-6 text-blue-600" />
+                            My Requirements
+                        </h2>
+                        
+                        <div className="space-y-4">
+                            {myRequirements.length > 0 ? myRequirements.map(req => (
+                                <div key={req.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 transition-all space-y-4">
+                                    <div>
+                                        <h3 className="font-black text-gray-900 uppercase tracking-tighter text-lg">{req.crop_name}</h3>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            <div className="text-xs font-bold text-gray-400 flex items-center gap-1"><ShoppingCart className="w-3.5 h-3.5" /> {req.quantity} units</div>
+                                            <div className="text-xs font-bold text-blue-600 flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> ₹{req.budget} budget</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 bg-gray-50 p-2 rounded-xl">
+                                        <MapPin className="w-3 h-3" /> <span>{req.location}</span>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="p-10 text-center bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200">
+                                    <p className="text-gray-400 font-bold">No requirements yet.</p>
+                                    <Link to="/post-requirement" className="text-blue-600 font-black text-xs hover:underline mt-1 inline-block">POST YOUR FIRST NEED</Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Marketplace Spotlight */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
@@ -106,7 +142,7 @@ const VendorDashboard = () => {
                             <Link key={crop.id} to={`/crops/${crop.id}`} className="block bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group">
                                 <div className="h-40 overflow-hidden relative">
                                     <img src={crop.image || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=600'} alt={crop.crop_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                    <div className="absolute bottom-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-green-700 font-black text-xs shadow-sm">${crop.price}/unit</div>
+                                    <div className="absolute bottom-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-green-700 font-black text-xs shadow-sm">₹{crop.price}/unit</div>
                                 </div>
                                 <div className="p-5">
                                     <h3 className="font-black text-gray-900 uppercase tracking-tighter truncate">{crop.crop_name}</h3>
@@ -116,36 +152,6 @@ const VendorDashboard = () => {
                                 </div>
                             </Link>
                         ))}
-                    </div>
-                </div>
-
-                {/* My Active Requirements */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                        <ClipboardList className="w-6 h-6 text-blue-600" />
-                        My Requirements
-                    </h2>
-                    
-                    <div className="space-y-4">
-                        {myRequirements.length > 0 ? myRequirements.map(req => (
-                            <div key={req.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 transition-all space-y-4">
-                                <div>
-                                    <h3 className="font-black text-gray-900 uppercase tracking-tighter text-lg">{req.crop_name}</h3>
-                                    <div className="flex items-center gap-4 mt-2">
-                                        <div className="text-xs font-bold text-gray-400 flex items-center gap-1"><ShoppingCart className="w-3.5 h-3.5" /> {req.quantity} units</div>
-                                        <div className="text-xs font-bold text-blue-600 flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> ${req.budget} budget</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 bg-gray-50 p-2 rounded-xl">
-                                    <MapPin className="w-3 h-3" /> <span>{req.location}</span>
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="p-10 text-center bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200">
-                                <p className="text-gray-400 font-bold">No requirements yet.</p>
-                                <Link to="/post-requirement" className="text-blue-600 font-black text-xs hover:underline mt-1 inline-block">POST YOUR FIRST NEED</Link>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

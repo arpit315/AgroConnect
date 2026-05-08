@@ -8,6 +8,9 @@ const CropDetails = () => {
     const navigate = useNavigate();
     const [crop, setCrop] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [orderQty, setOrderQty] = useState('');
+    const [orderLoading, setOrderLoading] = useState(false);
+    const [pricePrediction, setPricePrediction] = useState(null);
 
     useEffect(() => {
         fetchCrop();
@@ -17,10 +20,35 @@ const CropDetails = () => {
         try {
             const res = await api.get(`/crops/${id}`);
             setCrop(res.data);
+            
+            // Fetch price prediction based on crop name
+            try {
+                const predRes = await api.post('/smart/predict-price', { crop_name: res.data.crop_name });
+                setPricePrediction(predRes.data);
+            } catch (err) {
+                console.error("Prediction failed");
+            }
         } catch (err) {
             console.error('Failed to fetch crop details', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePlaceOrder = async () => {
+        setOrderLoading(true);
+        try {
+            await api.post('/orders', {
+                crop_id: id,
+                quantity: orderQty
+            });
+            alert('Order placed successfully!');
+            setOrderQty('');
+        } catch (err) {
+            console.error(err);
+            alert('Failed to place order. Please try again.');
+        } finally {
+            setOrderLoading(false);
         }
     };
 
@@ -69,7 +97,7 @@ const CropDetails = () => {
                         <h1 className="text-6xl font-black text-gray-900 tracking-tight leading-none uppercase">{crop.crop_name}</h1>
                         <div className="flex items-center gap-2 text-2xl font-bold text-green-600">
                              <Tag className="w-6 h-6" />
-                             ${crop.price} <span className="text-gray-400 text-lg font-medium">/ unit</span>
+                             ₹{crop.price} <span className="text-gray-400 text-lg font-medium">/ unit</span>
                         </div>
                     </div>
 
@@ -125,6 +153,46 @@ const CropDetails = () => {
                                 Email Farmer
                              </a>
                         </div>
+                    </div>
+
+                    {/* Order & Smart Features Section */}
+                    <div className="space-y-6 pt-6 border-t border-gray-100">
+                        <div className="bg-green-50 p-6 rounded-3xl border border-green-100 space-y-4">
+                            <h3 className="text-xl font-bold text-green-900">Place an Order</h3>
+                            <div className="flex gap-4">
+                                <input 
+                                    type="number" 
+                                    min="1" 
+                                    max={crop.quantity}
+                                    value={orderQty}
+                                    onChange={(e) => setOrderQty(e.target.value)}
+                                    placeholder="Quantity"
+                                    className="w-1/3 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-green-600 outline-none font-bold"
+                                />
+                                <button 
+                                    onClick={handlePlaceOrder}
+                                    disabled={orderLoading || !orderQty}
+                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50"
+                                >
+                                    {orderLoading ? 'Placing Order...' : `Buy for ₹${(orderQty * crop.price) || 0}`}
+                                </button>
+                            </div>
+                        </div>
+
+                        {pricePrediction && (
+                            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                                <h3 className="text-xl font-bold text-gray-900">Price Prediction Trend</h3>
+                                <p className="text-sm text-gray-500">Based on historical market data for {crop.crop_name}</p>
+                                <div className="flex gap-2 overflow-x-auto pb-2">
+                                    {pricePrediction.trend.map((t, idx) => (
+                                        <div key={idx} className="flex-shrink-0 bg-gray-50 p-3 rounded-xl text-center min-w-[80px]">
+                                            <p className="text-xs text-gray-400 font-bold uppercase">{t.day}</p>
+                                            <p className="text-lg font-black text-gray-900">₹{t.predicted_price}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

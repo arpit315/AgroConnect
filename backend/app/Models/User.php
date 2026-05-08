@@ -49,4 +49,34 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function crops()
+    {
+        return $this->hasMany(Crop::class, 'farmer_id');
+    }
+
+    public function requirements()
+    {
+        return $this->hasMany(Requirement::class, 'vendor_id');
+    }
+
+    public function ordersAsBuyer()
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
+
+    public function ordersAsFarmer()
+    {
+        return $this->hasMany(Order::class, 'farmer_id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
 }

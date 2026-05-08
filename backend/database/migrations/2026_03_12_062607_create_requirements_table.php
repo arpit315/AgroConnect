@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('requirements', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade');
             $table->string('crop_name');
             $table->integer('quantity');

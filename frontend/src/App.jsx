@@ -13,6 +13,8 @@ import MyCrops from './pages/MyCrops';
 import VendorDashboard from './pages/VendorDashboard';
 import PostRequirement from './pages/PostRequirement';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Chat from './pages/Chat';
 
 const ProtectedRoute = ({ children, role }) => {
     const { user, loading } = useAuth();
@@ -28,9 +30,9 @@ function App() {
     return (
         <AuthProvider>
             <Router>
-                <div className="min-h-screen bg-gray-50">
+                <div className="min-h-screen bg-white">
                     <Navbar />
-                    <main className="container mx-auto px-4 py-8">
+                    <main className="pt-20"> {/* Padding for fixed navbar */}
                         <Routes>
                             {/* Public Routes */}
                             <Route path="/" element={<Home />} />
@@ -41,6 +43,7 @@ function App() {
                             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                             <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
                             <Route path="/crops/:id" element={<ProtectedRoute><CropDetails /></ProtectedRoute>} />
+                            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
 
                             {/* Farmer Routes */}
                             <Route path="/farmer" element={<ProtectedRoute role="farmer"><FarmerDashboard /></ProtectedRoute>} />
@@ -52,10 +55,12 @@ function App() {
                             <Route path="/post-requirement" element={<ProtectedRoute role="vendor"><PostRequirement /></ProtectedRoute>} />
                         </Routes>
                     </main>
+                    <Footer />
                 </div>
             </Router>
         </AuthProvider>
     );
 }
+
 
 export default App;

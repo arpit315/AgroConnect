@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, ShoppingBag, ClipboardList, PlusCircle, TrendingUp, Users, ArrowRight, Loader, Tag, MapPin } from 'lucide-react';
+import WeatherWidget from '../components/WeatherWidget';
 
 const FarmerDashboard = () => {
     const { user } = useAuth();
@@ -88,8 +89,15 @@ const FarmerDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-10">
-                {/* My Crops Section */}
+            <div className="grid lg:grid-cols-3 gap-10">
+                {/* Weather Widget */}
+                <div className="lg:col-span-1">
+                    <WeatherWidget location={user?.location || "Farm"} />
+                </div>
+                
+                {/* Main Content Area */}
+                <div className="lg:col-span-2 space-y-10">
+                    {/* My Crops Section */}
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
@@ -114,7 +122,7 @@ const FarmerDashboard = () => {
                                 <div className="flex-grow">
                                     <h3 className="font-bold text-gray-900 text-lg uppercase tracking-tight">{crop.crop_name}</h3>
                                     <div className="flex items-center gap-3 mt-1">
-                                        <span className="text-sm font-black text-green-600">${crop.price}/unit</span>
+                                        <span className="text-sm font-black text-green-600">₹{crop.price}/unit</span>
                                         <span className="text-xs font-bold text-gray-400 flex items-center gap-1">
                                             <MapPin className="w-3 h-3" /> {crop.location}
                                         </span>
@@ -152,7 +160,7 @@ const FarmerDashboard = () => {
                                         Qty Required: <span className="font-black text-gray-700">{req.quantity} units</span>
                                     </p>
                                     <div className="flex items-center gap-4 mt-2">
-                                        <span className="text-xs font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full">Budget: ${req.budget}</span>
+                                        <span className="text-xs font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full">Budget: ₹{req.budget}</span>
                                         <span className="text-xs font-bold text-gray-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> {req.location}</span>
                                     </div>
                                 </div>
@@ -170,6 +178,7 @@ const FarmerDashboard = () => {
                             </div>
                         )}
                     </div>
+                </div>
                 </div>
             </div>
         </div>

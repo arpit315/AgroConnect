@@ -96,7 +96,7 @@ const AddCrop = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-gray-700 ml-1 uppercase tracking-widest">Price per Unit ($)</label>
+                                    <label className="text-sm font-black text-gray-700 ml-1 uppercase tracking-widest">Price per Unit (₹)</label>
                                     <div className="relative group">
                                         <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-green-600 transition-colors" />
                                         <input

@@ -19,7 +19,7 @@ return new class extends Migration
             $col->string('password');
             $col->string('role')->default('farmer');
             $col->string('phone')->nullable();
-            $col->string('location')->nullable();
+            $col->string('location')->default('India');
             $col->rememberToken();
             $col->timestamps();
         });

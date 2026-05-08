@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Requirement extends Model
 {
-    // Define fillable fields and relationships here
+    protected $fillable = ['vendor_id', 'crop_name', 'quantity', 'budget', 'location', 'description'];
+
+    public function vendor()
+    {
+        return $this->belongsTo(User::class, 'vendor_id');
+    }
 }

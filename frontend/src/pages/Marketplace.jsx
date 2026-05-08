@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { Search, MapPin, Tag, Filter, Grid, List as ListIcon, ShoppingBag, Loader } from 'lucide-react';
+import MapLocator from '../components/MapLocator';
 
 const Marketplace = () => {
     const [crops, setCrops] = useState([]);
@@ -20,7 +21,13 @@ const Marketplace = () => {
     const fetchCrops = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/crops');
+            const params = new URLSearchParams();
+            if (filters.search) params.append('search', filters.search);
+            if (filters.location) params.append('location', filters.location);
+            if (filters.minPrice) params.append('min_price', filters.minPrice);
+            if (filters.maxPrice) params.append('max_price', filters.maxPrice);
+            
+            const res = await api.get(`/crops?${params.toString()}`);
             setCrops(res.data);
         } catch (err) {
             console.error('Failed to fetch crops', err);
@@ -29,14 +36,11 @@ const Marketplace = () => {
         }
     };
 
-    const filteredCrops = crops.filter(crop => {
-        const matchesSearch = crop.crop_name.toLowerCase().includes(filters.search.toLowerCase());
-        const matchesLocation = crop.location.toLowerCase().includes(filters.location.toLowerCase());
-        const price = parseFloat(crop.price);
-        const matchesMinPrice = filters.minPrice === '' || price >= parseFloat(filters.minPrice);
-        const matchesMaxPrice = filters.maxPrice === '' || price <= parseFloat(filters.maxPrice);
-        return matchesSearch && matchesLocation && matchesMinPrice && matchesMaxPrice;
-    });
+    const handleApplyFilters = () => {
+        fetchCrops();
+    };
+
+    const filteredCrops = crops;
 
     return (
         <div className="space-y-12 py-6 animate-in fade-in duration-500">
@@ -94,7 +98,7 @@ const Marketplace = () => {
                         onChange={e => setFilters({...filters, maxPrice: e.target.value})}
                     />
                 </div>
-                <button className="bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-[0.98]">
+                <button onClick={handleApplyFilters} className="bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-[0.98]">
                     <Filter className="w-5 h-5" />
                     Apply Filters
                 </button>
@@ -106,8 +110,10 @@ const Marketplace = () => {
                     <p className="text-gray-500 font-bold">Bringing you the latest harvests...</p>
                 </div>
             ) : filteredCrops.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {filteredCrops.map(crop => (
+                <div className="space-y-12">
+                    <MapLocator crops={filteredCrops} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {filteredCrops.map(crop => (
                         <Link 
                             key={crop.id} 
                             to={`/crops/${crop.id}`}
@@ -120,7 +126,7 @@ const Marketplace = () => {
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
                                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm text-green-700 font-black text-sm">
-                                    ${crop.price}/unit
+                                    ₹{crop.price}/unit
                                 </div>
                             </div>
                             <div className="p-6 space-y-4">
@@ -146,6 +152,7 @@ const Marketplace = () => {
                             </div>
                         </Link>
                     ))}
+                    </div>
                 </div>
             ) : (
                 <div className="text-center py-20 animate-in fade-in slide-in-from-top-4">

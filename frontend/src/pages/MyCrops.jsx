@@ -67,7 +67,7 @@ const MyCrops = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
                                     <div className="w-full flex items-center justify-between">
                                         <div className="px-3 py-1 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full">Active</div>
-                                        <p className="text-white text-lg font-black tracking-tight">${crop.price} <span className="text-white/70 text-xs font-medium">/ unit</span></p>
+                                        <p className="text-white text-lg font-black tracking-tight">₹{crop.price} <span className="text-white/70 text-xs font-medium">/ unit</span></p>
                                     </div>
                                 </div>
                             </div>
