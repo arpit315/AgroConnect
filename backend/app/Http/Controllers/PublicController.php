@@ -12,7 +12,7 @@ class PublicController extends Controller
     {
         $farmersCount = User::where('role', 'farmer')->count();
         $vendorsCount = User::where('role', 'vendor')->count();
-        $citiesCount = Crop::distinct('location')->count();
+        $citiesCount = Crop::pluck('location')->unique()->count();
         
         $recentCrops = Crop::with('farmer')->latest()->take(3)->get();
 

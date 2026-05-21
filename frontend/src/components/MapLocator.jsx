@@ -30,8 +30,21 @@ const MapLocator = ({ crops }) => {
                 {crops && crops.map((crop, index) => {
                     // Generate pseudo-random nearby coordinates based on ID for demo
                     // Adjusted for India's spread
-                    const lat = center[0] + (Math.sin(crop.id || index) * 6);
-                    const lon = center[1] + (Math.cos(crop.id || index) * 8);
+                    let idVal = index;
+                    if (crop.id) {
+                        if (typeof crop.id === 'number') {
+                            idVal = crop.id;
+                        } else {
+                            let hash = 0;
+                            const idStr = String(crop.id);
+                            for (let i = 0; i < idStr.length; i++) {
+                                hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
+                            }
+                            idVal = Math.abs(hash);
+                        }
+                    }
+                    const lat = center[0] + (Math.sin(idVal) * 6);
+                    const lon = center[1] + (Math.cos(idVal) * 8);
                     
                     return (
                         <Marker key={crop.id || index} position={[lat, lon]}>

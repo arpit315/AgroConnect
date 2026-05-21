@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('crops', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farmer_id')->constrained('users')->onDelete('cascade');
+            $table->string('farmer_id')->index();
             $table->string('crop_name');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);

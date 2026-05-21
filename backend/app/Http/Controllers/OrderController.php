@@ -22,7 +22,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'crop_id' => 'required|exists:crops,id',
+            'crop_id' => 'required|exists:crops,_id',
             'quantity' => 'required|integer|min:1',
         ]);
 

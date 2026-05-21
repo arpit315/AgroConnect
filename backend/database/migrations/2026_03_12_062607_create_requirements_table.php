@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade');
+            $table->string('vendor_id')->index();
             $table->string('crop_name');
             $table->integer('quantity');
             $table->decimal('budget', 10, 2);

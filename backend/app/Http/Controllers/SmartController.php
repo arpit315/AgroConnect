@@ -81,11 +81,17 @@ class SmartController extends Controller
 
     public function marketTrends(Request $request)
     {
-        $trends = Requirement::selectRaw('crop_name, sum(quantity) as total_demand')
+        $trends = Requirement::all()
             ->groupBy('crop_name')
-            ->orderByDesc('total_demand')
+            ->map(function ($group, $name) {
+                return [
+                    'crop_name' => $name,
+                    'total_demand' => $group->sum('quantity')
+                ];
+            })
+            ->sortByDesc('total_demand')
             ->take(5)
-            ->get();
+            ->values();
 
         return response()->json($trends);
     }
